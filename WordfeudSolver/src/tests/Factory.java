@@ -1,6 +1,9 @@
 package tests;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 import junit.framework.Assert;
 
@@ -16,19 +19,27 @@ public class Factory {
 	private static String tileValuesFilename = "tileValues.txt";
 	private static String dictionaryFilename = "dictionary.txt";
 	
+	private File getFileInClassPath(String filename) throws Exception
+	{
+		URL path = getClass().getResource(filename);
+		if(path==null) {
+		     throw new Exception("Couldn't load "+filename);
+		}
+		return new File(path.toURI());
+	}
 	@Test
-	public void filesExistAndReadable()
+	public void filesExistAndReadable() throws Exception
 	{
-		Assert.assertTrue(new File(boardFilename).canRead());
-		Assert.assertTrue(new File(tileValuesFilename).canRead());
-		Assert.assertTrue(new File(dictionaryFilename).canRead());		
+		Assert.assertTrue((getFileInClassPath(boardFilename)).canRead());
+		Assert.assertTrue((getFileInClassPath(tileValuesFilename)).canRead());
+		Assert.assertTrue((getFileInClassPath(dictionaryFilename)).canRead());		
 	}
 	
-	public static TileHandler getTileHandler()
+	public TileHandler getTileHandler()
 	{
 		try
 		{
-			return new TileHandler(tileValuesFilename);
+			return new TileHandler(getFileInClassPath(tileValuesFilename));
 		}
 		catch (Exception ex)
 		{
@@ -37,11 +48,11 @@ public class Factory {
 		}
 	}
 	
-	public static Board getBoard()
+	public Board getBoard()
 	{
 		try
 		{
-			return new Board(boardFilename, tileValuesFilename);
+			return new Board(getFileInClassPath(boardFilename), getFileInClassPath(tileValuesFilename));
 		}
 		catch (Exception ex)
 		{
@@ -50,11 +61,11 @@ public class Factory {
 		}
 	}
 	
-	public static WordfeudDictionary getWordfeudDictionary()
+	public WordfeudDictionary getWordfeudDictionary()
 	{
 		try
 		{
-			return new WordfeudDictionary(dictionaryFilename);
+			return new WordfeudDictionary(getFileInClassPath(dictionaryFilename));
 		}
 		catch (Exception ex)
 		{

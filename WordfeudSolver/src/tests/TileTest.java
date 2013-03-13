@@ -13,8 +13,7 @@ public class TileTest {
 	@Test
 	public void boardSquaresTest() throws Exception
 	{
-		String filename = "tileValues.txt";
-		TileHandler tileHandler = new TileHandler(filename);
+		TileHandler tileHandler = new Factory().getTileHandler();
 		String stringWord1 = "apple";
 		Tile[] tileWord1 = tileHandler.getTiles(stringWord1);
 		Assert.assertTrue(checkEquals(tileWord1, stringWord1));

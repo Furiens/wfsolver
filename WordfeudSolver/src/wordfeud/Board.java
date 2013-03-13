@@ -1,5 +1,13 @@
 package wordfeud;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.ArrayList;
 
 import wordfeud.Square;
@@ -12,15 +20,35 @@ public class Board {
 
 	private boolean isEmpty = true;
 
-	public Board(String boardFilename, String tileValuesFilename) throws Exception {
-		this.tileHandler = new TileHandler(tileValuesFilename);
+	public Board(File file, File file2) throws Exception {
+		this.tileHandler = new TileHandler(file2);
 		
-		boolean correctBoardFormatting = true;		
-
-		//TODO Auto-generated method stub
-		correctBoardFormatting = false;
-		if(!correctBoardFormatting)
-			throw new Exception("Incorrect board format");
+		tileHandler = new TileHandler(file2);
+		
+		FileInputStream in = new FileInputStream(file);
+		BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		ArrayList<String> boardStrings = new ArrayList<String>();
+		String line;
+		while((line = br.readLine()) != null)
+		{
+			boardStrings.add(line);
+		}
+		br.close();
+		
+		int width = boardStrings.get(0).length();
+		int height = boardStrings.size();
+		squares = new Square[width][height];
+		
+		for(int y = 0; y < height; y++)
+		{
+			String row = boardStrings.get(y);
+			if(row.length() != width)
+				throw new Exception("Board must be rectangular");
+			for(int x = 0; x < width; x++)
+			{
+				squares[x][y] = SquaresFactory.createSquare(x, y, row.charAt(x));
+			}
+		}
 	}
 
 	public Square getSquare(int i, int j) {
